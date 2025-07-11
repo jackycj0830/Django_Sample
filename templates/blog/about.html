@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}關於我們 - Django 部落格範例{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <article>
+            <header class="text-center mb-5">
+                <h1 class="display-4"><i class="fas fa-info-circle"></i> 關於本站</h1>
+                <p class="lead text-muted">Django 部落格範例專案介紹</p>
+            </header>
+
+            <section class="mb-5">
+                <h2><i class="fas fa-rocket"></i> 專案簡介</h2>
+                <p>
+                    這是一個使用 Django 框架建立的部落格範例專案，旨在展示 Django 的基本功能和最佳實踐。
+                    本專案包含了一個完整的部落格系統，具備文章發布、分類管理、標籤系統、評論功能等特色。
+                </p>
+                <p>
+                    無論您是 Django 初學者還是想要了解部落格系統架構的開發者，這個專案都能為您提供實用的參考。
+                </p>
+            </section>
+
+            <section class="mb-5">
+                <h2><i class="fas fa-star"></i> 主要功能</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success"></i> 
+                                <strong>文章管理</strong> - 發布、編輯、刪除文章
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success"></i> 
+                                <strong>分類系統</strong> - 文章分類管理
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success"></i> 
+                                <strong>標籤功能</strong> - 靈活的標籤系統
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success"></i> 
+                                <strong>評論系統</strong> - 讀者互動功能
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success"></i> 
+                                <strong>搜尋功能</strong> - 全文搜尋文章
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success"></i> 
+                                <strong>分頁系統</strong> - 優化載入效能
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success"></i> 
+                                <strong>響應式設計</strong> - 支援各種裝置
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success"></i> 
+                                <strong>管理後台</strong> - Django Admin 整合
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-5">
+                <h2><i class="fas fa-code"></i> 技術架構</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fab fa-python fa-3x text-primary mb-3"></i>
+                                <h5>後端技術</h5>
+                                <ul class="list-unstyled">
+                                    <li>Django 4.2+</li>
+                                    <li>Python 3.8+</li>
+                                    <li>SQLite 資料庫</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fab fa-html5 fa-3x text-danger mb-3"></i>
+                                <h5>前端技術</h5>
+                                <ul class="list-unstyled">
+                                    <li>Bootstrap 5</li>
+                                    <li>Font Awesome</li>
+                                    <li>響應式設計</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-tools fa-3x text-warning mb-3"></i>
+                                <h5>開發工具</h5>
+                                <ul class="list-unstyled">
+                                    <li>Git 版本控制</li>
+                                    <li>虛擬環境</li>
+                                    <li>單元測試</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-5">
+                <h2><i class="fas fa-graduation-cap"></i> 學習目標</h2>
+                <p>透過這個專案，您可以學習到：</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul>
+                            <li>Django 專案結構與設定</li>
+                            <li>模型（Models）設計與關聯</li>
+                            <li>視圖（Views）與 URL 配置</li>
+                            <li>模板（Templates）系統使用</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul>
+                            <li>Django Admin 客製化</li>
+                            <li>表單處理與驗證</li>
+                            <li>分頁與搜尋功能實作</li>
+                            <li>靜態檔案管理</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-5">
+                <h2><i class="fas fa-envelope"></i> 聯絡資訊</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">
+                            如果您對這個專案有任何問題或建議，歡迎透過以下方式聯絡我們：
+                        </p>
+                        <ul class="list-unstyled">
+                            <li><i class="fab fa-github"></i> GitHub: 
+                                <a href="https://github.com/jackycj0830/Django_Sample" target="_blank">
+                                    Django_Sample
+                                </a>
+                            </li>
+                            <li><i class="fas fa-envelope"></i> Email: 
+                                <a href="mailto:admin@example.com">admin@example.com</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <div class="text-center">
+                <a href="{% url 'blog:post_list' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-arrow-left"></i> 返回首頁
+                </a>
+            </div>
+        </article>
+    </div>
+</div>
+{% endblock %}

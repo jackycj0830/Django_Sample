@@ -1,0 +1,402 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}API 文件 - Django 部落格範例{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <article>
+            <header class="text-center mb-5">
+                <h1 class="display-4"><i class="fas fa-code"></i> API 文件</h1>
+                <p class="lead text-muted">Django 部落格 REST API 使用指南</p>
+            </header>
+
+            <section class="mb-5">
+                <h2><i class="fas fa-info-circle"></i> API 概述</h2>
+                <p>
+                    本 API 提供了部落格系統的核心功能，包括文章、分類、標籤和評論的讀取操作。
+                    所有 API 回應都使用 JSON 格式。
+                </p>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-lightbulb"></i> 
+                    <strong>基礎 URL:</strong> <code>{{ request.build_absolute_uri }}/api/</code>
+                </div>
+            </section>
+
+            <section class="mb-5">
+                <h2><i class="fas fa-list"></i> API 端點</h2>
+                
+                <div class="accordion" id="apiAccordion">
+                    <!-- 文章列表 API -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingPosts">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePosts">
+                                <span class="badge bg-success me-2">GET</span>
+                                /api/posts/ - 取得文章列表
+                            </button>
+                        </h2>
+                        <div id="collapsePosts" class="accordion-collapse collapse show" data-bs-parent="#apiAccordion">
+                            <div class="accordion-body">
+                                <h5>參數</h5>
+                                <ul>
+                                    <li><code>page</code> (可選): 頁碼，預設為 1</li>
+                                    <li><code>search</code> (可選): 搜尋關鍵字</li>
+                                    <li><code>category</code> (可選): 分類 ID</li>
+                                </ul>
+                                
+                                <h5>範例請求</h5>
+                                <pre><code>GET /api/posts/?page=1&search=Django&category=1</code></pre>
+                                
+                                <h5>範例回應</h5>
+                                <pre><code>{
+  "posts": [
+    {
+      "id": 1,
+      "title": "Django 入門指南",
+      "slug": "django-tutorial",
+      "excerpt": "學習 Django 的基本概念...",
+      "author": "admin",
+      "category": "Django 教學",
+      "tags": ["Django", "Python"],
+      "created_at": "2024-01-01T10:00:00Z",
+      "published_at": "2024-01-01T10:00:00Z",
+      "url": "/post/django-tutorial/"
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "total_pages": 5,
+    "total_count": 50,
+    "has_next": true,
+    "has_previous": false
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 文章詳細 API -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingPostDetail">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePostDetail">
+                                <span class="badge bg-success me-2">GET</span>
+                                /api/posts/{slug}/ - 取得文章詳細資料
+                            </button>
+                        </h2>
+                        <div id="collapsePostDetail" class="accordion-collapse collapse" data-bs-parent="#apiAccordion">
+                            <div class="accordion-body">
+                                <h5>參數</h5>
+                                <ul>
+                                    <li><code>slug</code> (必要): 文章的 URL 別名</li>
+                                </ul>
+                                
+                                <h5>範例請求</h5>
+                                <pre><code>GET /api/posts/django-tutorial/</code></pre>
+                                
+                                <h5>範例回應</h5>
+                                <pre><code>{
+  "post": {
+    "id": 1,
+    "title": "Django 入門指南",
+    "slug": "django-tutorial",
+    "content": "完整的文章內容...",
+    "excerpt": "文章摘要...",
+    "author": {
+      "username": "admin",
+      "first_name": "管理員"
+    },
+    "category": {
+      "id": 1,
+      "name": "Django 教學"
+    },
+    "tags": [
+      {"id": 1, "name": "Django"},
+      {"id": 2, "name": "Python"}
+    ],
+    "featured_image": "/media/blog/images/django.jpg",
+    "created_at": "2024-01-01T10:00:00Z",
+    "updated_at": "2024-01-01T10:00:00Z",
+    "published_at": "2024-01-01T10:00:00Z",
+    "comments": [
+      {
+        "id": 1,
+        "author": "reader1",
+        "content": "很棒的文章！",
+        "created_at": "2024-01-01T11:00:00Z"
+      }
+    ],
+    "comments_count": 1
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 分類列表 API -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingCategories">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategories">
+                                <span class="badge bg-success me-2">GET</span>
+                                /api/categories/ - 取得分類列表
+                            </button>
+                        </h2>
+                        <div id="collapseCategories" class="accordion-collapse collapse" data-bs-parent="#apiAccordion">
+                            <div class="accordion-body">
+                                <h5>範例請求</h5>
+                                <pre><code>GET /api/categories/</code></pre>
+                                
+                                <h5>範例回應</h5>
+                                <pre><code>{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Django 教學",
+      "description": "Django 框架相關的教學文章",
+      "post_count": 15,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  ]
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 標籤列表 API -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTags">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTags">
+                                <span class="badge bg-success me-2">GET</span>
+                                /api/tags/ - 取得標籤列表
+                            </button>
+                        </h2>
+                        <div id="collapseTags" class="accordion-collapse collapse" data-bs-parent="#apiAccordion">
+                            <div class="accordion-body">
+                                <h5>範例請求</h5>
+                                <pre><code>GET /api/tags/</code></pre>
+                                
+                                <h5>範例回應</h5>
+                                <pre><code>{
+  "tags": [
+    {
+      "id": 1,
+      "name": "Django",
+      "post_count": 10,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  ]
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 建立評論 API -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingCreateComment">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCreateComment">
+                                <span class="badge bg-warning me-2">POST</span>
+                                /api/posts/{post_id}/comments/ - 建立評論
+                            </button>
+                        </h2>
+                        <div id="collapseCreateComment" class="accordion-collapse collapse" data-bs-parent="#apiAccordion">
+                            <div class="accordion-body">
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-lock"></i> 此 API 需要使用者登入
+                                </div>
+                                
+                                <h5>參數</h5>
+                                <ul>
+                                    <li><code>post_id</code> (必要): 文章 ID</li>
+                                    <li><code>content</code> (必要): 評論內容</li>
+                                </ul>
+                                
+                                <h5>範例請求</h5>
+                                <pre><code>POST /api/posts/1/comments/
+Content-Type: application/json
+
+{
+  "content": "這篇文章很有幫助！"
+}</code></pre>
+                                
+                                <h5>範例回應</h5>
+                                <pre><code>{
+  "comment": {
+    "id": 5,
+    "author": "reader1",
+    "content": "這篇文章很有幫助！",
+    "created_at": "2024-01-01T12:00:00Z"
+  },
+  "message": "評論發表成功"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 搜尋 API -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingSearch">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSearch">
+                                <span class="badge bg-success me-2">GET</span>
+                                /api/search/ - 搜尋功能
+                            </button>
+                        </h2>
+                        <div id="collapseSearch" class="accordion-collapse collapse" data-bs-parent="#apiAccordion">
+                            <div class="accordion-body">
+                                <h5>參數</h5>
+                                <ul>
+                                    <li><code>q</code> (必要): 搜尋關鍵字</li>
+                                </ul>
+                                
+                                <h5>範例請求</h5>
+                                <pre><code>GET /api/search/?q=Django</code></pre>
+                                
+                                <h5>範例回應</h5>
+                                <pre><code>{
+  "query": "Django",
+  "results": {
+    "posts": [...],
+    "categories": [...],
+    "tags": [...]
+  },
+  "total_results": 25
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 統計資料 API -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingStats">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStats">
+                                <span class="badge bg-success me-2">GET</span>
+                                /api/stats/ - 取得統計資料
+                            </button>
+                        </h2>
+                        <div id="collapseStats" class="accordion-collapse collapse" data-bs-parent="#apiAccordion">
+                            <div class="accordion-body">
+                                <h5>範例請求</h5>
+                                <pre><code>GET /api/stats/</code></pre>
+                                
+                                <h5>範例回應</h5>
+                                <pre><code>{
+  "stats": {
+    "total_posts": 50,
+    "total_categories": 5,
+    "total_tags": 20,
+    "total_comments": 150,
+    "recent_posts": [...]
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-5">
+                <h2><i class="fas fa-exclamation-triangle"></i> 錯誤處理</h2>
+                <p>API 使用標準的 HTTP 狀態碼來表示請求結果：</p>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>狀態碼</th>
+                                <th>說明</th>
+                                <th>範例</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge bg-success">200</span></td>
+                                <td>請求成功</td>
+                                <td>成功取得資料</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-info">201</span></td>
+                                <td>建立成功</td>
+                                <td>成功建立評論</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-warning">400</span></td>
+                                <td>請求錯誤</td>
+                                <td>缺少必要參數</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-warning">401</span></td>
+                                <td>未授權</td>
+                                <td>需要登入</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-danger">404</span></td>
+                                <td>找不到資源</td>
+                                <td>文章不存在</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-danger">500</span></td>
+                                <td>伺服器錯誤</td>
+                                <td>內部錯誤</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="mb-5">
+                <h2><i class="fas fa-code"></i> 使用範例</h2>
+                
+                <h4>JavaScript (Fetch API)</h4>
+                <pre><code>// 取得文章列表
+fetch('/api/posts/')
+  .then(response => response.json())
+  .then(data => {
+    console.log('文章列表:', data.posts);
+  });
+
+// 搜尋文章
+fetch('/api/search/?q=Django')
+  .then(response => response.json())
+  .then(data => {
+    console.log('搜尋結果:', data.results);
+  });
+
+// 發表評論 (需要登入)
+fetch('/api/posts/1/comments/', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-CSRFToken': getCookie('csrftoken')  // CSRF token
+  },
+  body: JSON.stringify({
+    content: '這篇文章很棒！'
+  })
+})
+.then(response => response.json())
+.then(data => {
+  console.log('評論已發表:', data.comment);
+});</code></pre>
+
+                <h4>Python (requests)</h4>
+                <pre><code>import requests
+
+# 取得文章列表
+response = requests.get('http://localhost:8000/api/posts/')
+data = response.json()
+print('文章列表:', data['posts'])
+
+# 搜尋文章
+response = requests.get('http://localhost:8000/api/search/', params={'q': 'Django'})
+data = response.json()
+print('搜尋結果:', data['results'])</code></pre>
+            </section>
+
+            <div class="text-center">
+                <a href="{% url 'blog:post_list' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-arrow-left"></i> 返回首頁
+                </a>
+            </div>
+        </article>
+    </div>
+</div>
+{% endblock %}

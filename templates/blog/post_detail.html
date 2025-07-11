@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ post.title }} - Django 部落格範例{% endblock %}
+
+{% block content %}
+<article class="mb-5">
+    <!-- 文章標題 -->
+    <header class="mb-4">
+        <h1 class="display-5">{{ post.title }}</h1>
+        
+        <div class="text-muted mb-3">
+            <i class="fas fa-user"></i> {{ post.author.username }}
+            <i class="fas fa-calendar ms-3"></i> {{ post.published_at|date:"Y年m月d日 H:i" }}
+            {% if post.category %}
+                <i class="fas fa-folder ms-3"></i> 
+                <a href="{% url 'blog:category_detail' post.category.pk %}" 
+                   class="text-decoration-none">{{ post.category.name }}</a>
+            {% endif %}
+            <i class="fas fa-eye ms-3"></i> 閱讀時間約 {{ post.content|wordcount|floatformat:0|add:"50"|div:"200" }} 分鐘
+        </div>
+        
+        <!-- 標籤 -->
+        {% if post.tags.all %}
+            <div class="mb-3">
+                {% for tag in post.tags.all %}
+                    <a href="{% url 'blog:tag_detail' tag.pk %}" 
+                       class="badge bg-primary text-decoration-none me-1">
+                        <i class="fas fa-tag"></i> {{ tag.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </header>
+
+    <!-- 特色圖片 -->
+    {% if post.featured_image %}
+        <div class="mb-4">
+            <img src="{{ post.featured_image.url }}" class="img-fluid rounded shadow" 
+                 alt="{{ post.title }}">
+        </div>
+    {% endif %}
+
+    <!-- 文章內容 -->
+    <div class="post-content">
+        {{ post.content|linebreaks }}
+    </div>
+
+    <!-- 文章底部資訊 -->
+    <footer class="mt-5 pt-4 border-top">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="text-muted mb-0">
+                    <i class="fas fa-clock"></i> 發布於 {{ post.published_at|date:"Y年m月d日" }}
+                    {% if post.updated_at != post.created_at %}
+                        <br><i class="fas fa-edit"></i> 更新於 {{ post.updated_at|date:"Y年m月d日" }}
+                    {% endif %}
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <!-- 分享按鈕 -->
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary btn-sm" 
+                            onclick="shareOnFacebook()">
+                        <i class="fab fa-facebook-f"></i> 分享
+                    </button>
+                    <button type="button" class="btn btn-outline-info btn-sm" 
+                            onclick="shareOnTwitter()">
+                        <i class="fab fa-twitter"></i> 推文
+                    </button>
+                    <button type="button" class="btn btn-outline-success btn-sm" 
+                            onclick="copyLink()">
+                        <i class="fas fa-link"></i> 複製連結
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+</article>
+
+<!-- 相關文章 -->
+{% if related_posts %}
+    <section class="mb-5">
+        <h3><i class="fas fa-newspaper"></i> 相關文章</h3>
+        <div class="row">
+            {% for related_post in related_posts %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        {% if related_post.featured_image %}
+                            <img src="{{ related_post.featured_image.url }}" 
+                                 class="card-img-top" alt="{{ related_post.title }}" 
+                                 style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <a href="{{ related_post.get_absolute_url }}" 
+                                   class="text-decoration-none">
+                                    {{ related_post.title|truncatechars:50 }}
+                                </a>
+                            </h6>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    {{ related_post.published_at|date:"m/d" }}
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
+
+<!-- 評論區 -->
+<section class="comments-section">
+    <h3><i class="fas fa-comments"></i> 評論 ({{ comments.count }})</h3>
+    
+    <!-- 評論表單 -->
+    {% if user.is_authenticated %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-pen"></i> 發表評論</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ comment_form.content }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> 發表評論
+                    </button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> 
+            請 <a href="/admin/login/" class="alert-link">登入</a> 後發表評論。
+        </div>
+    {% endif %}
+
+    <!-- 評論列表 -->
+    {% if comments %}
+        <div class="comments-list">
+            {% for comment in comments %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-title mb-1">
+                                    <i class="fas fa-user-circle"></i> {{ comment.author.username }}
+                                </h6>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock"></i> {{ comment.created_at|date:"Y年m月d日 H:i" }}
+                                </small>
+                            </div>
+                            {% if user == comment.author or user.is_staff %}
+                                <a href="{% url 'blog:delete_comment' comment.id %}" 
+                                   class="btn btn-outline-danger btn-sm"
+                                   onclick="return confirm('確定要刪除這則評論嗎？')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                        <p class="card-text mt-2">{{ comment.content|linebreaks }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-comment-slash fa-2x text-muted mb-2"></i>
+            <p class="text-muted">還沒有評論，成為第一個評論的人吧！</p>
+        </div>
+    {% endif %}
+</section>
+
+<!-- 導航按鈕 -->
+<div class="d-flex justify-content-between mt-5">
+    <a href="{% url 'blog:post_list' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> 返回文章列表
+    </a>
+    {% if user.is_staff %}
+        <a href="/admin/blog/post/{{ post.id }}/change/" class="btn btn-outline-primary">
+            <i class="fas fa-edit"></i> 編輯文章
+        </a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function shareOnFacebook() {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+}
+
+function shareOnTwitter() {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent('{{ post.title }}');
+    window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+}
+
+function copyLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+        alert('連結已複製到剪貼簿！');
+    });
+}
+</script>
+{% endblock %}
